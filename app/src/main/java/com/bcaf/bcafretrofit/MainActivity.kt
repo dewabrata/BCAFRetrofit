@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
 
     fun showListMovieFragment(){
         val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
-        ft.add(R.id.frameFragment, ListMovie.newInstance("",""))
+        ft.add(R.id.frameFragment, ListMovie.newInstance("",""),"list")
         ft.commit()
     }
 
