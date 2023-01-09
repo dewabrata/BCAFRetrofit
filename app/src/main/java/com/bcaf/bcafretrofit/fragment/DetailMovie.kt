@@ -5,13 +5,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bcaf.bcafretrofit.ICallBackNetwork
 import com.bcaf.bcafretrofit.MainActivity
 import com.bcaf.bcafretrofit.R
+import com.bcaf.bcafretrofit.adapter.DetailList
+import com.bcaf.bcafretrofit.adapter.MovieListAdapter
 import com.bcaf.bcafretrofit.model.OMDBDetailResponse
 import com.bcaf.bcafretrofit.model.SearchItem
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_detail_movie.*
+import kotlinx.android.synthetic.main.fragment_list_movie.*
 import kotlinx.android.synthetic.main.item_movie.view.*
 
 // TODO: Rename parameter arguments, choose names that match
@@ -79,6 +83,14 @@ class DetailMovie : Fragment(), ICallBackNetwork {
         txtSutradara.setText(data.director)
 
         Glide.with(requireActivity()).load(data.poster).into(poster)
+
+        var adapterx = DetailList()
+        adapterx.data = data.ratings!!
+
+        detailList.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = adapterx
+        }
     }
 
     override fun onFailed() {
