@@ -5,7 +5,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bcaf.bcafretrofit.ICallBackNetwork
+import com.bcaf.bcafretrofit.MainActivity
 import com.bcaf.bcafretrofit.R
+import com.bcaf.bcafretrofit.model.OMDBDetailResponse
+import com.bcaf.bcafretrofit.model.SearchItem
+import com.bumptech.glide.Glide
+import kotlinx.android.synthetic.main.fragment_detail_movie.*
+import kotlinx.android.synthetic.main.item_movie.view.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -17,7 +24,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [DetailMovie.newInstance] factory method to
  * create an instance of this fragment.
  */
-class DetailMovie : Fragment() {
+class DetailMovie : Fragment(), ICallBackNetwork {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -35,7 +42,11 @@ class DetailMovie : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_detail_movie, container, false)
+        val view = inflater.inflate(R.layout.fragment_detail_movie, container, false)
+
+        (context as MainActivity).detailMovie(param1.toString(),this)
+
+        return view
     }
 
     companion object {
@@ -56,5 +67,21 @@ class DetailMovie : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    override fun onFinish(data: List<SearchItem>) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onFinishDetail(data: OMDBDetailResponse) {
+
+        txtJudul.setText(data.title)
+        txtSutradara.setText(data.director)
+
+        Glide.with(requireActivity()).load(data.poster).into(poster)
+    }
+
+    override fun onFailed() {
+        TODO("Not yet implemented")
     }
 }

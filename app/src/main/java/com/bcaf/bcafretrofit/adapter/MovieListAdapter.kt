@@ -41,7 +41,7 @@ class MovieListAdapter : RecyclerView.Adapter<MovieListAdapter.ViewHolder>() {
 
                 it ->
                 val ft: FragmentTransaction = (context as MainActivity).supportFragmentManager.beginTransaction()
-                ft.replace(R.id.frameFragment, DetailMovie.newInstance("",""),"")
+                ft.replace(R.id.frameFragment, DetailMovie.newInstance(item.imdbID.toString(),""),"detail")
                     .addToBackStack("list")
                 ft.commit()
 

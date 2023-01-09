@@ -11,6 +11,7 @@ import com.bcaf.bcafretrofit.ICallBackNetwork
 import com.bcaf.bcafretrofit.MainActivity
 import com.bcaf.bcafretrofit.R
 import com.bcaf.bcafretrofit.adapter.MovieListAdapter
+import com.bcaf.bcafretrofit.model.OMDBDetailResponse
 import com.bcaf.bcafretrofit.model.SearchItem
 import kotlinx.android.synthetic.main.fragment_list_movie.*
 import kotlinx.android.synthetic.main.fragment_list_movie.view.*
@@ -85,6 +86,10 @@ class ListMovie : Fragment() , ICallBackNetwork{
             layoutManager = LinearLayoutManager(requireContext())
             adapter = adapterx
         }
+
+    }
+
+    override fun onFinishDetail(data: OMDBDetailResponse) {
 
     }
 

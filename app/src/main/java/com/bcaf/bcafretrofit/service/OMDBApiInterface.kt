@@ -1,5 +1,6 @@
 package com.bcaf.bcafretrofit.service
 
+import com.bcaf.bcafretrofit.model.OMDBDetailResponse
 import com.bcaf.bcafretrofit.model.OMDBResponse
 import retrofit2.Call
 import retrofit2.http.GET
@@ -15,5 +16,9 @@ interface OMDBApiInterface {
     @GET("/?apikey=80641bfb&s={title}")
     fun searchMovie2(@Path("title") title:String): Call<OMDBResponse>
 
+    @GET("/?apikey=80641bfb")
+    fun detailMovie(@Query("i") id:String): Call<OMDBDetailResponse>
+
+    //http://www.omdbapi.com/?apikey=80641bfb&i=tt19869838
 
 }

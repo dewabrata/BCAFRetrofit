@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.FragmentTransaction
 import com.bcaf.bcafretrofit.fragment.ListMovie
+import com.bcaf.bcafretrofit.model.OMDBDetailResponse
 import com.bcaf.bcafretrofit.model.OMDBResponse
 import com.bcaf.bcafretrofit.model.SearchItem
 import com.bcaf.bcafretrofit.service.NetworkConfig
@@ -45,6 +46,28 @@ class MainActivity : AppCompatActivity() {
             override fun onFailure(call: Call<OMDBResponse>, t: Throwable) {
                Log.e("Failed Response", t.message.toString())
                 callbackNetwork.onFailed()
+            }
+
+        })
+
+
+    }
+
+    fun detailMovie(idMovie : String, callbackNetwork: ICallBackNetwork){
+
+        NetworkConfig().getServiceOMDB().detailMovie(idMovie).enqueue(object : Callback<OMDBDetailResponse>{
+            override fun onResponse(
+                call: Call<OMDBDetailResponse>,
+                response: Response<OMDBDetailResponse>
+            ) {
+                if(response.body() !=null) {
+                    callbackNetwork.onFinishDetail(response.body()as OMDBDetailResponse)
+
+                }
+            }
+
+            override fun onFailure(call: Call<OMDBDetailResponse>, t: Throwable) {
+                TODO("Not yet implemented")
             }
 
         })
