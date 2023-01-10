@@ -1,5 +1,6 @@
 package com.bcaf.bcafretrofit.service
 
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -11,8 +12,28 @@ class NetworkConfig {
     fun getInterceptor() : OkHttpClient {
         var logging = HttpLoggingInterceptor()
         logging.level = HttpLoggingInterceptor.Level.BODY
+//
+        val okHttpClient  = OkHttpClient.Builder().addInterceptor(logging)
+            .build()
 
-        val okHttpClient  = OkHttpClient.Builder().addInterceptor(logging).build()
+
+
+        return  okHttpClient
+
+    }
+
+    fun getInterceptorWithHeader() : OkHttpClient {
+        var logging = HttpLoggingInterceptor()
+        logging.level = HttpLoggingInterceptor.Level.BODY
+//
+        val okHttpClient  = OkHttpClient.Builder().addInterceptor(logging)
+            .addInterceptor{chain ->
+                val request = chain.request().newBuilder()
+                    .addHeader("app-id","63bcc99843b161608eeac665")
+                chain.proceed(request.build())
+            }
+            .build()
+
 
 
         return  okHttpClient
@@ -28,5 +49,17 @@ class NetworkConfig {
             .build()
     }
 
+    fun getRetrofitPostDummy() : Retrofit{
+
+        return  Retrofit.Builder()
+            .baseUrl("https://dummyapi.io/data/v1/")
+            .client(getInterceptorWithHeader())
+
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
     fun getServiceOMDB() = getRetrofit().create(OMDBApiInterface::class.java)
+    fun getServiceDummy() = getRetrofitPostDummy().create(DummyApiInterface::class.java)
+
 }
