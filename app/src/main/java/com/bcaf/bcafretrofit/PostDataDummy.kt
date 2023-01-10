@@ -1,16 +1,21 @@
 package com.bcaf.bcafretrofit
 
+import android.content.Context
 import android.content.DialogInterface
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.bcaf.bcafretrofit.database.DummyDatabase
 import com.bcaf.bcafretrofit.model.PostDummyData
 import com.bcaf.bcafretrofit.model.ResponsePostDummyData
 import com.bcaf.bcafretrofit.service.NetworkConfig
 import kotlinx.android.synthetic.main.activity_post_data_dummy.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,30 +29,61 @@ class PostDataDummy : AppCompatActivity() {
             createMultipleSelectDialog()
         })
 
+        loadData()
         btnPost.setOnClickListener(View.OnClickListener { v->
 
-            var dummyData = PostDummyData("60d0fe4f5311236168a109f4",
-                txtImage.text.toString(),txtText.text.toString(),
-                txtLikes.text.toString().toInt(),selectionList)
-            NetworkConfig().getServiceDummy().postData(dummyData).enqueue( object : Callback<ResponsePostDummyData>{
-                override fun onResponse(
-                    call: Call<ResponsePostDummyData>,
-                    response: Response<ResponsePostDummyData>
-                ) {
-                    if (response.isSuccessful){
-                        Toast.makeText(applicationContext,response.message(),Toast.LENGTH_LONG).show()
-                    }
-                }
+            val cm = applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val networkInfo =  cm.activeNetworkInfo
+            if(networkInfo !=null && networkInfo.isConnected == true){
+                postData()
+            }else{
 
-                override fun onFailure(call: Call<ResponsePostDummyData>, t: Throwable) {
-                    Log.e("error post", t.printStackTrace().toString())
+                GlobalScope.launch {
+                    var dummyData = PostDummyData(0,"60d0fe4f5311236168a109f4",
+                        txtImage.text.toString(),txtText.text.toString(),
+                        txtLikes.text.toString().toInt(),selectionList)
+                    DummyDatabase.getInstance(applicationContext).dummyDao().insertDummy(dummyData)
+                        runOnUiThread({
+                            Toast.makeText(applicationContext,"Maaf jaringan tidak ada,data tersimpan", Toast.LENGTH_LONG).show()
+                        })
                 }
+            }
 
-            })
 
         })
     }
 
+    fun loadData(){
+
+        GlobalScope.launch {
+
+           var data : List<PostDummyData> = DummyDatabase.getInstance(applicationContext).dummyDao().getAll()
+
+            Log.d("Data",data.toString())
+        }
+    }
+
+    fun postData(){
+
+        var dummyData = PostDummyData(0,"60d0fe4f5311236168a109f4",
+            txtImage.text.toString(),txtText.text.toString(),
+            txtLikes.text.toString().toInt(),selectionList)
+        NetworkConfig().getServiceDummy().postData(dummyData).enqueue( object : Callback<ResponsePostDummyData>{
+            override fun onResponse(
+                call: Call<ResponsePostDummyData>,
+                response: Response<ResponsePostDummyData>
+            ) {
+                if (response.isSuccessful){
+                    Toast.makeText(applicationContext,response.message(),Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ResponsePostDummyData>, t: Throwable) {
+                Log.e("error post", t.printStackTrace().toString())
+            }
+
+        })
+    }
 
     var selectionList = mutableListOf<String>()
     val listItem = arrayOf("Movies","Actor","Fun")
